@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Approvals Queue - LeaveFlow - Enterprise Leave Management</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="file:///C:/Users/Abhishek/OneDrive/Desktop/employeeleavemanagementsystem/static/css/custom.css">
+    
+</head>
+<body class="h-full text-slate-800 antialiased flex flex-col md:flex-row">
+
+    
+    <!-- Sidebar Navigation -->
+    <aside class="w-full md:w-64 bg-slate-900 text-slate-300 flex-shrink-0 flex flex-col justify-between border-r border-slate-800">
+        <div>
+            <!-- Brand Logo -->
+            <div class="h-16 flex items-center px-6 bg-slate-950/60 border-b border-slate-800/80 gap-3">
+                <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+                    <i class="fa-solid fa-calendar-check text-lg"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-white text-lg tracking-tight">LeaveFlow</span>
+                    <span class="text-[10px] block text-indigo-400 font-semibold tracking-wider uppercase">Enterprise ELMS</span>
+                </div>
+            </div>
+
+            <!-- Role Badge -->
+            <div class="px-6 py-4">
+                <div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white text-xs" style="background-color: #6366F1;">
+                        A
+                    </div>
+                    <div class="overflow-hidden">
+                        <p class="text-xs font-semibold text-white truncate">Alexandra Vance</p>
+                        <p class="text-[11px] text-slate-400 truncate flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                            Admin • EMP-1000
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="px-3 space-y-1 text-sm font-medium">
+                
+                    <p class="px-3 pt-2 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">Administration</p>
+                    <a href="/admin/dashboard" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-chart-pie w-5 text-center"></i>
+                            <span>Overview</span>
+                        </div>
+                    </a>
+                    <a href="/admin/approvals" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition bg-indigo-600 text-white shadow-md shadow-indigo-600/30">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-inbox w-5 text-center"></i>
+                            <span>Approvals Queue</span>
+                        </div>
+                        
+                        <span class="px-2 py-0.5 text-xs font-bold rounded-full bg-amber-500 text-slate-950 pulse-badge">
+                            3
+                        </span>
+                        
+                    </a>
+                    <a href="/admin/employees" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-users-gear w-5 text-center"></i>
+                            <span>Personnel & Quotas</span>
+                        </div>
+                    </a>
+                    <a href="/admin/reports" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-file-invoice w-5 text-center"></i>
+                            <span>Reports & Export</span>
+                        </div>
+                    </a>
+                    <div class="my-3 border-t border-slate-800"></div>
+                
+
+                <p class="px-3 pt-2 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">My Workspace</p>
+                <a href="/dashboard" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-house w-5 text-center"></i>
+                    <span>Leave Dashboard</span>
+                </a>
+                <a href="/leave/apply" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-paper-plane w-5 text-center"></i>
+                    <span>Request Leave</span>
+                </a>
+                <a href="/leave/history" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
+                    <span>My Applications</span>
+                </a>
+                <a href="/holidays" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-calendar-days w-5 text-center"></i>
+                    <span>Holiday Schedule</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Logout Bottom Footer -->
+        <div class="p-4 border-t border-slate-800/80 bg-slate-950/40">
+            <a href="/logout" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-400 hover:text-red-400 hover:bg-red-950/20 rounded-xl transition font-medium">
+                <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i>
+                <span>Sign Out</span>
+            </a>
+        </div>
+    </aside>
+    
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        
+        <!-- Top App Header -->
+        <header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-20 shadow-xs">
+            <div class="flex items-center gap-3">
+                <h1 class="text-lg font-bold text-slate-800">Leave Approvals Queue</h1>
+                <span class="text-xs text-slate-400 hidden sm:inline">|</span>
+                <span class="text-xs text-slate-500 font-medium hidden sm:inline">People Operations &amp; HR</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                    ADMIN PORTAL
+                </span>
+                <div class="text-xs text-slate-400 font-medium hidden md:block">
+                    <i class="fa-regular fa-calendar mr-1"></i> 2026-10-06
+                </div>
+            </div>
+        </header>
+        
+
+        <!-- Flash Alert Messages -->
+        <div class="px-6 pt-4">
+            
+                
+            
+        </div>
+
+        <!-- Page Specific Body Content -->
+        <main class="flex-1 p-6">
+            
+<div class="space-y-6">
+
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-xl font-extrabold text-slate-800">Pending Review Requests</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Evaluate leave applications, verify balance quotas, and sign off with manager feedback.</p>
+        </div>
+        <div class="text-xs font-bold px-3 py-1.5 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-500 pulse-badge"></span>
+            <span>3 Pending Action</span>
+        </div>
+    </div>
+
+    
+    <div class="grid grid-cols-1 gap-4">
+        
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs hover:border-slate-300 transition">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+
+                <!-- Left: Employee Info & Dates -->
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-2xl text-white font-black text-sm flex items-center justify-center flex-shrink-0 shadow-sm" style="background-color: #F59E0B;">
+                        MI
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="font-extrabold text-slate-900 text-base">Michael Chang</h3>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">EMP-1003</span>
+                            <span class="text-xs text-slate-400">• Marketing &amp; Growth</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-0.5">Senior Growth Manager • michael.c@company.com</p>
+
+                        <!-- Leave details line -->
+                        <div class="mt-3 flex flex-wrap items-center gap-3 text-xs">
+                            <span class="font-bold text-white px-2.5 py-1 rounded-lg text-[11px]" style="background-color: #3B82F6;">
+                                Annual Leave (AL)
+                            </span>
+                            <span class="font-semibold text-slate-700">
+                                <i class="fa-regular fa-calendar mr-1 text-slate-400"></i>
+                                2026-11-02 &rarr; 2026-11-04
+                            </span>
+                            <span class="font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
+                                3.0 Business Day(s) 
+                            </span>
+                            <span class="text-slate-400">
+                                Remaining Balance: <strong class="text-slate-700">18.0 days</strong>
+                            </span>
+                        </div>
+
+                        <!-- Reason box -->
+                        <div class="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-700">
+                            <strong class="text-slate-900 block mb-0.5 font-bold">Stated Reason:</strong>
+                            <p class="italic">"Post-campaign rest and travel"</p>
+                            <span class="text-[10px] text-slate-400 block mt-1">Submitted on 2026-10-05 07:45:17</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Action Buttons -->
+                <div class="flex items-center lg:flex-col justify-end gap-2.5 flex-shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100">
+                    <button type="button" onclick="openApproveModal('6', 'Michael Chang', '3.0')"
+                            class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-md shadow-emerald-600/20 transition flex items-center gap-2">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Approve Request</span>
+                    </button>
+                    <button type="button" onclick="openRejectModal('6', 'Michael Chang')"
+                            class="px-5 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-semibold text-xs transition flex items-center gap-2">
+                        <i class="fa-solid fa-xmark"></i>
+                        <span>Reject Request</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs hover:border-slate-300 transition">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+
+                <!-- Left: Employee Info & Dates -->
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-2xl text-white font-black text-sm flex items-center justify-center flex-shrink-0 shadow-sm" style="background-color: #EC4899;">
+                        SA
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="font-extrabold text-slate-900 text-base">Sarah Jenkins</h3>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">EMP-1002</span>
+                            <span class="text-xs text-slate-400">• Product &amp; Design</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-0.5">Lead UI/UX Designer • sarah.j@company.com</p>
+
+                        <!-- Leave details line -->
+                        <div class="mt-3 flex flex-wrap items-center gap-3 text-xs">
+                            <span class="font-bold text-white px-2.5 py-1 rounded-lg text-[11px]" style="background-color: #EF4444;">
+                                Sick Leave (SL)
+                            </span>
+                            <span class="font-semibold text-slate-700">
+                                <i class="fa-regular fa-calendar mr-1 text-slate-400"></i>
+                                2026-10-14 
+                            </span>
+                            <span class="font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
+                                0.5 Business Day(s) (Half-Day)
+                            </span>
+                            <span class="text-slate-400">
+                                Remaining Balance: <strong class="text-slate-700">12.0 days</strong>
+                            </span>
+                        </div>
+
+                        <!-- Reason box -->
+                        <div class="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-700">
+                            <strong class="text-slate-900 block mb-0.5 font-bold">Stated Reason:</strong>
+                            <p class="italic">"Dental clinic appointment in afternoon"</p>
+                            <span class="text-[10px] text-slate-400 block mt-1">Submitted on 2026-10-06 03:45:17</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Action Buttons -->
+                <div class="flex items-center lg:flex-col justify-end gap-2.5 flex-shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100">
+                    <button type="button" onclick="openApproveModal('4', 'Sarah Jenkins', '0.5')"
+                            class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-md shadow-emerald-600/20 transition flex items-center gap-2">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Approve Request</span>
+                    </button>
+                    <button type="button" onclick="openRejectModal('4', 'Sarah Jenkins')"
+                            class="px-5 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-semibold text-xs transition flex items-center gap-2">
+                        <i class="fa-solid fa-xmark"></i>
+                        <span>Reject Request</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs hover:border-slate-300 transition">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+
+                <!-- Left: Employee Info & Dates -->
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-2xl text-white font-black text-sm flex items-center justify-center flex-shrink-0 shadow-sm" style="background-color: #2563EB;">
+                        JO
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="font-extrabold text-slate-900 text-base">John Doe</h3>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">EMP-1001</span>
+                            <span class="text-xs text-slate-400">• Engineering</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-0.5">Senior Full Stack Engineer • john.doe@company.com</p>
+
+                        <!-- Leave details line -->
+                        <div class="mt-3 flex flex-wrap items-center gap-3 text-xs">
+                            <span class="font-bold text-white px-2.5 py-1 rounded-lg text-[11px]" style="background-color: #10B981;">
+                                Casual Leave (CL)
+                            </span>
+                            <span class="font-semibold text-slate-700">
+                                <i class="fa-regular fa-calendar mr-1 text-slate-400"></i>
+                                2026-10-15 &rarr; 2026-10-16
+                            </span>
+                            <span class="font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
+                                2.0 Business Day(s) 
+                            </span>
+                            <span class="text-slate-400">
+                                Remaining Balance: <strong class="text-slate-700">10.0 days</strong>
+                            </span>
+                        </div>
+
+                        <!-- Reason box -->
+                        <div class="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-700">
+                            <strong class="text-slate-900 block mb-0.5 font-bold">Stated Reason:</strong>
+                            <p class="italic">"Attending brother wedding reception"</p>
+                            <span class="text-[10px] text-slate-400 block mt-1">Submitted on 2026-10-06 05:45:17</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Action Buttons -->
+                <div class="flex items-center lg:flex-col justify-end gap-2.5 flex-shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100">
+                    <button type="button" onclick="openApproveModal('3', 'John Doe', '2.0')"
+                            class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-md shadow-emerald-600/20 transition flex items-center gap-2">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Approve Request</span>
+                    </button>
+                    <button type="button" onclick="openRejectModal('3', 'John Doe')"
+                            class="px-5 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-semibold text-xs transition flex items-center gap-2">
+                        <i class="fa-solid fa-xmark"></i>
+                        <span>Reject Request</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+        
+    </div>
+    
+
+</div>
+
+<!-- Modal 1: Approve Modal -->
+<div id="approveModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <h3 class="font-extrabold text-slate-900 text-base">Approve Leave Request</h3>
+            </div>
+            <button type="button" onclick="closeModal('approveModal')" class="text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <p class="text-xs text-slate-600">
+            Confirm approval for <strong id="approveModalEmpName" class="text-slate-900"></strong>. This will deduct <span id="approveModalDays" class="font-bold text-indigo-600"></span> day(s) from their annual balance.
+        </p>
+
+        <form id="approveForm" method="POST" action="" class="space-y-4">
+            <div>
+                <label for="approve_remarks" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                    Manager Remarks / Message (Optional)
+                </label>
+                <input type="text" id="approve_remarks" name="manager_remarks"
+                       placeholder="e.g., Approved. Handover coverage arranged with team."
+                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            </div>
+
+            <div class="flex items-center justify-end gap-2.5 pt-2">
+                <button type="button" onclick="closeModal('approveModal')" class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50">
+                    Cancel
+                </button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-md shadow-emerald-600/30 transition">
+                    Confirm Approval
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal 2: Reject Modal -->
+<div id="rejectModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <h3 class="font-extrabold text-slate-900 text-base">Reject Leave Request</h3>
+            </div>
+            <button type="button" onclick="closeModal('rejectModal')" class="text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <p class="text-xs text-slate-600">
+            Please provide a justification for declining this request for <strong id="rejectModalEmpName" class="text-slate-900"></strong>. The pending hold on their quota will be released.
+        </p>
+
+        <form id="rejectForm" method="POST" action="" class="space-y-4">
+            <div>
+                <label for="reject_remarks" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                    Reason for Rejection <span class="text-rose-500">*</span>
+                </label>
+                <textarea id="reject_remarks" name="manager_remarks" required rows="2"
+                          Critical product release deadline scheduled during these dates. Please reschedule for following week.
+                          class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"></textarea>
+            </div>
+
+            <div class="flex items-center justify-end gap-2.5 pt-2">
+                <button type="button" onclick="closeModal('rejectModal')" class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50">
+                    Cancel
+                </button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow-md shadow-rose-600/30 transition">
+                    Confirm Rejection
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openApproveModal(id, empName, days) {
+        document.getElementById('approveModalEmpName').textContent = empName;
+        document.getElementById('approveModalDays').textContent = days;
+        document.getElementById('approveForm').action = '/admin/approve/' + id;
+        openModal('approveModal');
+    }
+
+    function openRejectModal(id, empName) {
+        document.getElementById('rejectModalEmpName').textContent = empName;
+        document.getElementById('rejectForm').action = '/admin/reject/' + id;
+        openModal('rejectModal');
+    }
+</script>
+
+        </main>
+    </div>
+
+    <!-- Global App JS -->
+    <script src="file:///C:/Users/Abhishek/OneDrive/Desktop/employeeleavemanagementsystem/static/js/app.js"></script>
+    
+</body>
+</html>

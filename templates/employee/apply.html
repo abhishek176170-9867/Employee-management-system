@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Apply for Leave - LeaveFlow{% endblock %}
+{% block header_title %}Request Time Off{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-xl font-extrabold text-slate-800">Leave Application</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Submit your time off request for manager approval. Working days are computed automatically.</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="text-xs font-semibold text-slate-500 hover:text-slate-800 flex items-center gap-1">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Main Form Column -->
+        <div class="md:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6">
+            <form method="POST" action="{{ url_for('apply_leave') }}" class="space-y-5" id="leaveApplicationForm">
+
+                <!-- Leave Type Selection -->
+                <div>
+                    <label for="leave_type_id" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                        Leave Category <span class="text-rose-500">*</span>
+                    </label>
+                    <select id="leave_type_id" name="leave_type_id" required
+                            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                        <option value="">-- Choose Leave Category --</option>
+                        {% for lt in leave_types %}
+                            <option value="{{ lt.id }}" data-available="{{ lt.available_days }}">
+                                {{ lt.name }} ({{ lt.code }}) — Available: {{ lt.available_days }} day(s)
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Date Range Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="start_date" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                            Start Date <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="date" id="start_date" name="start_date" required
+                               class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <div>
+                        <label for="end_date" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                            End Date <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="date" id="end_date" name="end_date" required
+                               class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <!-- Half-Day Toggle -->
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+                    <input type="checkbox" id="is_half_day" name="is_half_day"
+                           class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                    <label for="is_half_day" class="text-xs font-semibold text-slate-700 cursor-pointer">
+                        Half-Day Request (Counts as 0.5 days on Start Date)
+                    </label>
+                </div>
+
+                <!-- Dynamic Duration Calculation Badge -->
+                <div id="calculated_days_badge" class="hidden">
+                    <i class="fa-solid fa-calculator text-base"></i>
+                    <span id="calculated_days_text"></span>
+                </div>
+
+                <!-- Insufficient Balance Warning -->
+                <div id="balance_warning" class="hidden p-3 rounded-xl text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                </div>
+
+                <!-- Reason for Leave -->
+                <div>
+                    <label for="reason" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                        Reason for Application <span class="text-rose-500">*</span>
+                    </label>
+                    <textarea id="reason" name="reason" rows="3" required
+                              placeholder="Please provide a brief reason for your leave request..."
+                              class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                    <a href="{{ url_for('dashboard') }}" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-semibold transition">
+                        Cancel
+                    </a>
+                    <button type="submit" id="submit_leave_btn"
+                            class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-md shadow-indigo-600/30 transition flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane text-xs"></i>
+                        <span>Submit Leave Application</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sidebar Guidelines & Tips -->
+        <div class="space-y-4">
+            <div class="bg-indigo-50/60 rounded-2xl border border-indigo-100 p-5">
+                <div class="flex items-center gap-2 text-indigo-900 font-bold text-sm mb-3">
+                    <i class="fa-solid fa-circle-info text-indigo-600"></i>
+                    <span>Leave Rules & Policies</span>
+                </div>
+                <ul class="text-xs text-indigo-950 space-y-2.5 leading-relaxed">
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-indigo-500 mt-0.5 text-[10px]"></i>
+                        <span><strong>Smart Business Day Calculation:</strong> Saturdays, Sundays, and official public holidays are automatically subtracted from your leave count.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-indigo-500 mt-0.5 text-[10px]"></i>
+                        <span><strong>Advance Notice:</strong> Please submit planned annual leave at least 3 business days prior to start date.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-indigo-500 mt-0.5 text-[10px]"></i>
+                        <span><strong>Half-day Leaves:</strong> Half-day leaves apply to single-day absences only.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-indigo-500 mt-0.5 text-[10px]"></i>
+                        <span><strong>Pending Hold:</strong> Applying places an instant hold on your quota to prevent double-booking.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Current Balances Quick Peek -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3">Your Quota Snapshot</h4>
+                <div class="space-y-2">
+                    {% for lt in leave_types %}
+                    <div class="flex items-center justify-between text-xs py-1.5 border-b border-slate-50">
+                        <span class="text-slate-600 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full" style="background-color: {{ lt.color }};"></span>
+                            {{ lt.name }}
+                        </span>
+                        <span class="font-bold text-slate-800">{{ lt.available_days }} <span class="text-[10px] text-slate-400 font-normal">left</span></span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

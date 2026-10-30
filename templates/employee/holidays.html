@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Holidays Schedule - LeaveFlow{% endblock %}
+{% block header_title %}Official Holidays Calendar{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-xl font-extrabold text-slate-800">Company & Public Holidays {{ current_year }}</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Official observed paid holidays. These days are automatically excluded when you apply for leave.</p>
+        </div>
+        <div class="text-xs font-semibold px-3 py-1.5 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200">
+            <i class="fa-solid fa-calendar-check mr-1.5"></i> {{ holidays|length }} Total Holidays
+        </div>
+    </div>
+
+    <!-- Holidays Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for h in holidays %}
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex items-center gap-4 hover:border-indigo-300 transition group">
+            <div class="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 flex flex-col items-center justify-center text-indigo-700 group-hover:bg-indigo-600 group-hover:text-white transition flex-shrink-0">
+                <span class="text-[10px] font-bold uppercase tracking-wider leading-none">{{ h.holiday_date[5:7] }}</span>
+                <span class="text-xl font-black leading-none mt-1">{{ h.holiday_date[8:10] }}</span>
+            </div>
+            <div class="overflow-hidden">
+                <h4 class="font-bold text-slate-800 text-sm group-hover:text-indigo-600 transition truncate">{{ h.name }}</h4>
+                <p class="text-xs text-slate-500 mt-0.5">{{ h.description or 'Company Holiday' }}</p>
+                <span class="inline-block mt-2 text-[10px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
+                    Date: {{ h.holiday_date }}
+                </span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

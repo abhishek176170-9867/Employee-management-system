@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - LeaveFlow{% endblock %}
+{% block header_title %}My Leave Overview{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Welcome & Quick Action Banner -->
+    <div class="bg-gradient-to-r from-indigo-900 via-indigo-800 to-slate-900 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+            <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-indigo-700/50 text-indigo-200 text-xs font-semibold mb-2">
+                <span>{{ session.get('emp_code') }}</span> • <span>{{ session.get('designation') }}</span>
+            </div>
+            <h2 class="text-2xl font-bold">Hello, {{ session.get('full_name') }}! 👋</h2>
+            <p class="text-indigo-200 text-sm mt-1">Here is your annual leave quota, pending requests, and upcoming holiday schedule for {{ current_year }}.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="{{ url_for('apply_leave') }}" class="px-5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-indigo-900 font-semibold text-sm shadow-md transition flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle text-indigo-600"></i>
+                <span>Apply for Leave</span>
+            </a>
+            <a href="{{ url_for('leave_history') }}" class="px-4 py-2.5 rounded-xl bg-indigo-700/60 hover:bg-indigo-700 text-white font-medium text-sm transition">
+                <span>View History</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Summary KPI Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+            <div class="flex items-center justify-between text-slate-400 mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider">Total Allocated</span>
+                <i class="fa-solid fa-calendar-check text-indigo-500"></i>
+            </div>
+            <p class="text-2xl font-extrabold text-slate-800">{{ total_allowed }} <span class="text-xs font-semibold text-slate-400">Days</span></p>
+            <p class="text-[11px] text-slate-400 mt-1">Annual standard quota</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+            <div class="flex items-center justify-between text-slate-400 mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider">Used to Date</span>
+                <i class="fa-solid fa-umbrella-beach text-blue-500"></i>
+            </div>
+            <p class="text-2xl font-extrabold text-slate-800">{{ total_used }} <span class="text-xs font-semibold text-slate-400">Days</span></p>
+            <p class="text-[11px] text-slate-400 mt-1">Approved leaves taken</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+            <div class="flex items-center justify-between text-slate-400 mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider">Under Review</span>
+                <i class="fa-solid fa-hourglass-half text-amber-500"></i>
+            </div>
+            <p class="text-2xl font-extrabold text-amber-600">{{ total_pending }} <span class="text-xs font-semibold text-slate-400">Days</span></p>
+            <p class="text-[11px] text-slate-400 mt-1">Awaiting manager approval</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+            <div class="flex items-center justify-between text-slate-400 mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider">Available Balance</span>
+                <i class="fa-solid fa-circle-check text-emerald-500"></i>
+            </div>
+            <p class="text-2xl font-extrabold text-emerald-600">{{ total_remaining }} <span class="text-xs font-semibold text-slate-400">Days</span></p>
+            <p class="text-[11px] text-slate-400 mt-1">Ready for application</p>
+        </div>
+    </div>
+
+    <!-- Category Balances Grid -->
+    <div>
+        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-3">Leave Balances by Category</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {% for b in balances %}
+                {% set available = b.total_allocated - b.used_days - b.pending_days %}
+                {% set pct = (b.used_days / b.total_allocated * 100) if b.total_allocated > 0 else 0 %}
+                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs relative overflow-hidden">
+                    <div class="h-1.5 absolute top-0 left-0 right-0" style="background-color: {{ b.leave_color }};"></div>
+                    <div class="flex items-center justify-between mb-3">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-md text-white text-[10px]" style="background-color: {{ b.leave_color }};">
+                                {{ b.leave_code }}
+                            </span>
+                            <h4 class="text-sm font-bold text-slate-800 mt-1.5">{{ b.leave_name }}</h4>
+                        </div>
+                        <span class="text-xl font-extrabold text-slate-800">{{ available }} <span class="text-[10px] font-normal text-slate-400">left</span></span>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div class="w-full bg-slate-100 rounded-full h-2 mb-3">
+                        <div class="h-2 rounded-full transition-all duration-500" style="width: {{ pct }}%; background-color: {{ b.leave_color }};"></div>
+                    </div>
+
+                    <div class="grid grid-cols-3 text-center pt-2 border-t border-slate-100 text-xs">
+                        <div>
+                            <span class="text-[10px] text-slate-400 block">Quota</span>
+                            <span class="font-bold text-slate-700">{{ b.total_allocated }}</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 block">Used</span>
+                            <span class="font-bold text-slate-700">{{ b.used_days }}</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 block">Pending</span>
+                            <span class="font-bold text-amber-600">{{ b.pending_days }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- 2 Column Section: Recent Applications & Upcoming Holidays -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Recent Applications Table -->
+        <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-bold text-slate-800">Recent Applications</h3>
+                <a href="{{ url_for('leave_history') }}" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">
+                    View All &rarr;
+                </a>
+            </div>
+
+            {% if recent_applications %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-2">
+                            <th class="pb-3">Type</th>
+                            <th class="pb-3">Dates</th>
+                            <th class="pb-3 text-center">Duration</th>
+                            <th class="pb-3">Status</th>
+                            <th class="pb-3 text-right">Applied</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for app in recent_applications %}
+                        <tr class="hover:bg-slate-50/70 transition">
+                            <td class="py-3 font-semibold text-slate-800">
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full" style="background-color: {{ app.leave_color }};"></span>
+                                    {{ app.leave_name }}
+                                </span>
+                            </td>
+                            <td class="py-3 text-xs text-slate-600">
+                                {{ app.start_date }} {% if app.start_date != app.end_date %}to {{ app.end_date }}{% endif %}
+                            </td>
+                            <td class="py-3 text-center font-bold text-slate-700 text-xs">
+                                {{ app.total_days }} day{% if app.total_days > 1 %}s{% endif %}
+                                {% if app.is_half_day %}<span class="block text-[10px] text-slate-400 font-normal">Half-day</span>{% endif %}
+                            </td>
+                            <td class="py-3">
+                                {% if app.status == 'approved' %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        <i class="fa-solid fa-check text-[9px] mr-1"></i> Approved
+                                    </span>
+                                {% elif app.status == 'pending' %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5 pulse-badge"></span> Pending
+                                    </span>
+                                {% elif app.status == 'rejected' %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                        <i class="fa-solid fa-xmark text-[9px] mr-1"></i> Rejected
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600">
+                                        Cancelled
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3 text-right text-xs text-slate-400">
+                                {{ app.applied_at[:10] }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-8 text-slate-400">
+                <i class="fa-regular fa-folder-open text-3xl mb-2 text-slate-300"></i>
+                <p class="text-sm">No leave applications submitted yet.</p>
+                <a href="{{ url_for('apply_leave') }}" class="inline-block mt-3 text-xs text-indigo-600 font-semibold hover:underline">
+                    Submit your first request &rarr;
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Upcoming Company Holidays -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-bold text-slate-800">Upcoming Holidays</h3>
+                <a href="{{ url_for('holidays') }}" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">
+                    Full List &rarr;
+                </a>
+            </div>
+
+            <div class="space-y-3">
+                {% for h in upcoming_holidays %}
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <div class="w-10 h-10 rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-600 flex flex-col items-center justify-center flex-shrink-0">
+                        <span class="text-[9px] font-bold uppercase leading-none">{{ h.holiday_date[5:7] }}</span>
+                        <span class="text-sm font-extrabold leading-none mt-0.5">{{ h.holiday_date[8:10] }}</span>
+                    </div>
+                    <div class="overflow-hidden">
+                        <p class="text-xs font-bold text-slate-800 truncate">{{ h.name }}</p>
+                        <p class="text-[11px] text-slate-500 truncate">{{ h.description or 'Company Observed Holiday' }}</p>
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-xs text-slate-400 text-center py-4">No upcoming holidays scheduled.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

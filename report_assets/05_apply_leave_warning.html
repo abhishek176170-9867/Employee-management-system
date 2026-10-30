@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Leave - LeaveFlow - Enterprise Leave Management</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="file:///C:/Users/Abhishek/OneDrive/Desktop/employeeleavemanagementsystem/static/css/custom.css">
+    
+</head>
+<body class="h-full text-slate-800 antialiased flex flex-col md:flex-row">
+
+    
+    <!-- Sidebar Navigation -->
+    <aside class="w-full md:w-64 bg-slate-900 text-slate-300 flex-shrink-0 flex flex-col justify-between border-r border-slate-800">
+        <div>
+            <!-- Brand Logo -->
+            <div class="h-16 flex items-center px-6 bg-slate-950/60 border-b border-slate-800/80 gap-3">
+                <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+                    <i class="fa-solid fa-calendar-check text-lg"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-white text-lg tracking-tight">LeaveFlow</span>
+                    <span class="text-[10px] block text-indigo-400 font-semibold tracking-wider uppercase">Enterprise ELMS</span>
+                </div>
+            </div>
+
+            <!-- Role Badge -->
+            <div class="px-6 py-4">
+                <div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white text-xs" style="background-color: #2563EB;">
+                        J
+                    </div>
+                    <div class="overflow-hidden">
+                        <p class="text-xs font-semibold text-white truncate">John Doe</p>
+                        <p class="text-[11px] text-slate-400 truncate flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            Employee • EMP-1001
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="px-3 space-y-1 text-sm font-medium">
+                
+
+                <p class="px-3 pt-2 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">My Workspace</p>
+                <a href="/dashboard" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-house w-5 text-center"></i>
+                    <span>Leave Dashboard</span>
+                </a>
+                <a href="/leave/apply" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition bg-indigo-600 text-white shadow-md shadow-indigo-600/30">
+                    <i class="fa-solid fa-paper-plane w-5 text-center"></i>
+                    <span>Request Leave</span>
+                </a>
+                <a href="/leave/history" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
+                    <span>My Applications</span>
+                </a>
+                <a href="/holidays" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-calendar-days w-5 text-center"></i>
+                    <span>Holiday Schedule</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Logout Bottom Footer -->
+        <div class="p-4 border-t border-slate-800/80 bg-slate-950/40">
+            <a href="/logout" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-400 hover:text-red-400 hover:bg-red-950/20 rounded-xl transition font-medium">
+                <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i>
+                <span>Sign Out</span>
+            </a>
+        </div>
+    </aside>
+    
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        
+        <!-- Top App Header -->
+        <header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-20 shadow-xs">
+            <div class="flex items-center gap-3">
+                <h1 class="text-lg font-bold text-slate-800">Request Time Off</h1>
+                <span class="text-xs text-slate-400 hidden sm:inline">|</span>
+                <span class="text-xs text-slate-500 font-medium hidden sm:inline">Engineering</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    EMPLOYEE PORTAL
+                </span>
+                <div class="text-xs text-slate-400 font-medium hidden md:block">
+                    <i class="fa-regular fa-calendar mr-1"></i> 2026-10-06
+                </div>
+            </div>
+        </header>
+        
+
+        <!-- Flash Alert Messages -->
+        <div class="px-6 pt-4">
+            
+                
+            
+        </div>
+
+        <!-- Page Specific Body Content -->
+        <main class="flex-1 p-6">
+            
+<div class="max-w-4xl mx-auto space-y-6">
+
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-xl font-extrabold text-slate-800">Leave Application</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Submit your time off request for manager approval. Working days are computed automatically.</p>
+        </div>
+        <a href="/dashboard" class="text-xs font-semibold text-slate-500 hover:text-slate-800 flex items-center gap-1">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Main Form Column -->
+        <div class="md:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6">
+            <form method="POST" action="/leave/apply" class="space-y-5" id="leaveApplicationForm">
+
+                <!-- Leave Type Selection -->
+                <div>
+                    <label for="leave_type_id" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                        Leave Category <span class="text-rose-500">*</span>
+                    </label>
+                    <select id="leave_type_id" name="leave_type_id" required
+                            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                        <option value="">-- Choose Leave Category --</option>
+                        
+                            <option value="1" data-available="15.0">
+                                Annual Leave (AL) — Available: 15.0 day(s)
+                            </option>
+                        
+                            <option value="2" data-available="11.0">
+                                Sick Leave (SL) — Available: 11.0 day(s)
+                            </option>
+                        
+                            <option value="3" selected data-available="8.0">
+                                Casual Leave (CL) — Available: 8.0 day(s)
+                            </option>
+                        
+                            <option value="4" data-available="15.0">
+                                Parental Leave (PL) — Available: 15.0 day(s)
+                            </option>
+                        
+                            <option value="5" data-available="5.0">
+                                Bereavement Leave (BL) — Available: 5.0 day(s)
+                            </option>
+                        
+                    </select>
+                </div>
+
+                <!-- Date Range Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="start_date" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                            Start Date <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="date" id="start_date" name="start_date" value="2026-10-15" required
+                               class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <div>
+                        <label for="end_date" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                            End Date <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="date" id="end_date" name="end_date" value="2026-10-16" required
+                               class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <!-- Half-Day Toggle -->
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+                    <input type="checkbox" id="is_half_day" name="is_half_day"
+                           class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                    <label for="is_half_day" class="text-xs font-semibold text-slate-700 cursor-pointer">
+                        Half-Day Request (Counts as 0.5 days on Start Date)
+                    </label>
+                </div>
+
+                <!-- Dynamic Duration Calculation Badge -->
+                <div id="calculated_days_badge" class="mt-2 p-3 rounded-xl text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-2">
+                    <i class="fa-solid fa-calculator text-base"></i>
+                    <span id="calculated_days_text">2.0 working day(s) calculated (weekends and company holidays excluded)</span>
+                </div>
+
+                <!-- Insufficient Balance Warning -->
+                <div id="balance_warning" class="p-3 rounded-xl text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 p-3 rounded-xl text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                </div>
+
+                <!-- Reason for Leave -->
+                <div>
+                    <label for="reason" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                        Reason for Application <span class="text-rose-500">*</span>
+                    </label>
+                    <textarea id="reason" name="reason" rows="3" required
+                              placeholder="Please provide a brief reason for your leave request..."
+                              class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                    <a href="/dashboard" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-semibold transition">
+                        Cancel
+                    </a>
+                    <button type="submit" id="submit_leave_btn"
+                            class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-md shadow-indigo-600/30 transition flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane text-xs"></i>
+                        <span>Submit Leave Application</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sidebar Guidelines & Tips -->
+        <div class="space-y-4">
+            <div class="bg-indigo-50/60 rounded-2xl border border-indigo-100 p-5">
+                <div class="flex items-center gap-2 text-indigo-900 font-bold text-sm mb-3">
+                    <i class="fa-solid fa-circle-info text-indigo-600"></i>
+                    <span>Leave Rules & Policies</span>
+                </div>
+                <ul class="text-xs text-indigo-950 space-y-2.5 leading-relaxed">
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-indigo-500 mt-0.5 text-[10px]"></i>
+                        <span><strong>Smart Business Day Calculation:</strong> Saturdays, Sundays, and official public holidays are automatically subtracted from your leave count.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-indigo-500 mt-0.5 text-[10px]"></i>
+                        <span><strong>Advance Notice:</strong> Please submit planned annual leave at least 3 business days prior to start date.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-indigo-500 mt-0.5 text-[10px]"></i>
+                        <span><strong>Half-day Leaves:</strong> Half-day leaves apply to single-day absences only.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-indigo-500 mt-0.5 text-[10px]"></i>
+                        <span><strong>Pending Hold:</strong> Applying places an instant hold on your quota to prevent double-booking.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Current Balances Quick Peek -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3">Your Quota Snapshot</h4>
+                <div class="space-y-2">
+                    
+                    <div class="flex items-center justify-between text-xs py-1.5 border-b border-slate-50">
+                        <span class="text-slate-600 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full" style="background-color: #3B82F6;"></span>
+                            Annual Leave
+                        </span>
+                        <span class="font-bold text-slate-800">15.0 <span class="text-[10px] text-slate-400 font-normal">left</span></span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between text-xs py-1.5 border-b border-slate-50">
+                        <span class="text-slate-600 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full" style="background-color: #EF4444;"></span>
+                            Sick Leave
+                        </span>
+                        <span class="font-bold text-slate-800">11.0 <span class="text-[10px] text-slate-400 font-normal">left</span></span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between text-xs py-1.5 border-b border-slate-50">
+                        <span class="text-slate-600 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full" style="background-color: #10B981;"></span>
+                            Casual Leave
+                        </span>
+                        <span class="font-bold text-slate-800">8.0 <span class="text-[10px] text-slate-400 font-normal">left</span></span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between text-xs py-1.5 border-b border-slate-50">
+                        <span class="text-slate-600 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full" style="background-color: #8B5CF6;"></span>
+                            Parental Leave
+                        </span>
+                        <span class="font-bold text-slate-800">15.0 <span class="text-[10px] text-slate-400 font-normal">left</span></span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between text-xs py-1.5 border-b border-slate-50">
+                        <span class="text-slate-600 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full" style="background-color: #64748B;"></span>
+                            Bereavement Leave
+                        </span>
+                        <span class="font-bold text-slate-800">5.0 <span class="text-[10px] text-slate-400 font-normal">left</span></span>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+        </main>
+    </div>
+
+    <!-- Global App JS -->
+    <script src="file:///C:/Users/Abhishek/OneDrive/Desktop/employeeleavemanagementsystem/static/js/app.js"></script>
+    
+</body>
+</html>

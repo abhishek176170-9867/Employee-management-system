@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Leave Approvals Queue - LeaveFlow{% endblock %}
+{% block header_title %}Leave Approvals Queue{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-xl font-extrabold text-slate-800">Pending Review Requests</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Evaluate leave applications, verify balance quotas, and sign off with manager feedback.</p>
+        </div>
+        <div class="text-xs font-bold px-3 py-1.5 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-500 pulse-badge"></span>
+            <span>{{ applications|length }} Pending Action</span>
+        </div>
+    </div>
+
+    {% if applications %}
+    <div class="grid grid-cols-1 gap-4">
+        {% for app in applications %}
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs hover:border-slate-300 transition">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+
+                <!-- Left: Employee Info & Dates -->
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-2xl text-white font-black text-sm flex items-center justify-center flex-shrink-0 shadow-sm" style="background-color: {{ app.avatar_color }};">
+                        {{ app.full_name[:2]|upper }}
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="font-extrabold text-slate-900 text-base">{{ app.full_name }}</h3>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">{{ app.emp_code }}</span>
+                            <span class="text-xs text-slate-400">• {{ app.department }}</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-0.5">{{ app.designation }} • {{ app.email }}</p>
+
+                        <!-- Leave details line -->
+                        <div class="mt-3 flex flex-wrap items-center gap-3 text-xs">
+                            <span class="font-bold text-white px-2.5 py-1 rounded-lg text-[11px]" style="background-color: {{ app.leave_color }};">
+                                {{ app.leave_name }} ({{ app.leave_code }})
+                            </span>
+                            <span class="font-semibold text-slate-700">
+                                <i class="fa-regular fa-calendar mr-1 text-slate-400"></i>
+                                {{ app.start_date }} {% if app.start_date != app.end_date %}&rarr; {{ app.end_date }}{% endif %}
+                            </span>
+                            <span class="font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
+                                {{ app.total_days }} Business Day(s) {% if app.is_half_day %}(Half-Day){% endif %}
+                            </span>
+                            <span class="text-slate-400">
+                                Remaining Balance: <strong class="text-slate-700">{{ app.current_remaining }} days</strong>
+                            </span>
+                        </div>
+
+                        <!-- Reason box -->
+                        <div class="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-700">
+                            <strong class="text-slate-900 block mb-0.5 font-bold">Stated Reason:</strong>
+                            <p class="italic">"{{ app.reason }}"</p>
+                            <span class="text-[10px] text-slate-400 block mt-1">Submitted on {{ app.applied_at }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Action Buttons -->
+                <div class="flex items-center lg:flex-col justify-end gap-2.5 flex-shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100">
+                    <button type="button" onclick="openApproveModal('{{ app.id }}', '{{ app.full_name }}', '{{ app.total_days }}')"
+                            class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-md shadow-emerald-600/20 transition flex items-center gap-2">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Approve Request</span>
+                    </button>
+                    <button type="button" onclick="openRejectModal('{{ app.id }}', '{{ app.full_name }}')"
+                            class="px-5 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-semibold text-xs transition flex items-center gap-2">
+                        <i class="fa-solid fa-xmark"></i>
+                        <span>Reject Request</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-white rounded-2xl border border-slate-200/80 p-12 text-center shadow-xs">
+        <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center mx-auto mb-3 text-2xl">
+            <i class="fa-solid fa-check-double"></i>
+        </div>
+        <h3 class="text-lg font-bold text-slate-800">Approvals Queue is Clear!</h3>
+        <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">There are no pending leave requests awaiting your decision at this moment.</p>
+        <a href="{{ url_for('admin_dashboard') }}" class="inline-block mt-4 px-4 py-2 rounded-xl bg-indigo-50 text-indigo-700 text-xs font-semibold hover:bg-indigo-100 transition">
+            &larr; Back to Dashboard
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- Modal 1: Approve Modal -->
+<div id="approveModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <h3 class="font-extrabold text-slate-900 text-base">Approve Leave Request</h3>
+            </div>
+            <button type="button" onclick="closeModal('approveModal')" class="text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <p class="text-xs text-slate-600">
+            Confirm approval for <strong id="approveModalEmpName" class="text-slate-900"></strong>. This will deduct <span id="approveModalDays" class="font-bold text-indigo-600"></span> day(s) from their annual balance.
+        </p>
+
+        <form id="approveForm" method="POST" action="" class="space-y-4">
+            <div>
+                <label for="approve_remarks" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                    Manager Remarks / Message (Optional)
+                </label>
+                <input type="text" id="approve_remarks" name="manager_remarks"
+                       placeholder="e.g., Approved. Handover coverage arranged with team."
+                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            </div>
+
+            <div class="flex items-center justify-end gap-2.5 pt-2">
+                <button type="button" onclick="closeModal('approveModal')" class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50">
+                    Cancel
+                </button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-md shadow-emerald-600/30 transition">
+                    Confirm Approval
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal 2: Reject Modal -->
+<div id="rejectModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <h3 class="font-extrabold text-slate-900 text-base">Reject Leave Request</h3>
+            </div>
+            <button type="button" onclick="closeModal('rejectModal')" class="text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <p class="text-xs text-slate-600">
+            Please provide a justification for declining this request for <strong id="rejectModalEmpName" class="text-slate-900"></strong>. The pending hold on their quota will be released.
+        </p>
+
+        <form id="rejectForm" method="POST" action="" class="space-y-4">
+            <div>
+                <label for="reject_remarks" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                    Reason for Rejection <span class="text-rose-500">*</span>
+                </label>
+                <textarea id="reject_remarks" name="manager_remarks" required rows="2"
+                          placeholder="e.g., Critical sprint release scheduled on these dates. Please reschedule."
+                          class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"></textarea>
+            </div>
+
+            <div class="flex items-center justify-end gap-2.5 pt-2">
+                <button type="button" onclick="closeModal('rejectModal')" class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50">
+                    Cancel
+                </button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow-md shadow-rose-600/30 transition">
+                    Confirm Rejection
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openApproveModal(id, empName, days) {
+        document.getElementById('approveModalEmpName').textContent = empName;
+        document.getElementById('approveModalDays').textContent = days;
+        document.getElementById('approveForm').action = '/admin/approve/' + id;
+        openModal('approveModal');
+    }
+
+    function openRejectModal(id, empName) {
+        document.getElementById('rejectModalEmpName').textContent = empName;
+        document.getElementById('rejectForm').action = '/admin/reject/' + id;
+        openModal('rejectModal');
+    }
+</script>
+{% endblock %}

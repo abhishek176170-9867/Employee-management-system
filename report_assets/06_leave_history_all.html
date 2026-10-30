@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application History - LeaveFlow - Enterprise Leave Management</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="file:///C:/Users/Abhishek/OneDrive/Desktop/employeeleavemanagementsystem/static/css/custom.css">
+    
+</head>
+<body class="h-full text-slate-800 antialiased flex flex-col md:flex-row">
+
+    
+    <!-- Sidebar Navigation -->
+    <aside class="w-full md:w-64 bg-slate-900 text-slate-300 flex-shrink-0 flex flex-col justify-between border-r border-slate-800">
+        <div>
+            <!-- Brand Logo -->
+            <div class="h-16 flex items-center px-6 bg-slate-950/60 border-b border-slate-800/80 gap-3">
+                <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+                    <i class="fa-solid fa-calendar-check text-lg"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-white text-lg tracking-tight">LeaveFlow</span>
+                    <span class="text-[10px] block text-indigo-400 font-semibold tracking-wider uppercase">Enterprise ELMS</span>
+                </div>
+            </div>
+
+            <!-- Role Badge -->
+            <div class="px-6 py-4">
+                <div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white text-xs" style="background-color: #2563EB;">
+                        J
+                    </div>
+                    <div class="overflow-hidden">
+                        <p class="text-xs font-semibold text-white truncate">John Doe</p>
+                        <p class="text-[11px] text-slate-400 truncate flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            Employee • EMP-1001
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="px-3 space-y-1 text-sm font-medium">
+                
+
+                <p class="px-3 pt-2 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">My Workspace</p>
+                <a href="/dashboard" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-house w-5 text-center"></i>
+                    <span>Leave Dashboard</span>
+                </a>
+                <a href="/leave/apply" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-paper-plane w-5 text-center"></i>
+                    <span>Request Leave</span>
+                </a>
+                <a href="/leave/history" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition bg-indigo-600 text-white shadow-md shadow-indigo-600/30">
+                    <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
+                    <span>My Applications</span>
+                </a>
+                <a href="/holidays" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-calendar-days w-5 text-center"></i>
+                    <span>Holiday Schedule</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Logout Bottom Footer -->
+        <div class="p-4 border-t border-slate-800/80 bg-slate-950/40">
+            <a href="/logout" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-400 hover:text-red-400 hover:bg-red-950/20 rounded-xl transition font-medium">
+                <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i>
+                <span>Sign Out</span>
+            </a>
+        </div>
+    </aside>
+    
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        
+        <!-- Top App Header -->
+        <header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-20 shadow-xs">
+            <div class="flex items-center gap-3">
+                <h1 class="text-lg font-bold text-slate-800">My Leave Applications</h1>
+                <span class="text-xs text-slate-400 hidden sm:inline">|</span>
+                <span class="text-xs text-slate-500 font-medium hidden sm:inline">Engineering</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    EMPLOYEE PORTAL
+                </span>
+                <div class="text-xs text-slate-400 font-medium hidden md:block">
+                    <i class="fa-regular fa-calendar mr-1"></i> 2026-10-06
+                </div>
+            </div>
+        </header>
+        
+
+        <!-- Flash Alert Messages -->
+        <div class="px-6 pt-4">
+            
+                
+            
+        </div>
+
+        <!-- Page Specific Body Content -->
+        <main class="flex-1 p-6">
+            
+<div class="space-y-6">
+
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h2 class="text-xl font-extrabold text-slate-800">Application History</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Track your submitted leave requests, approval progress, and manager feedback.</p>
+        </div>
+        <a href="/leave/apply" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 transition">
+            <i class="fa-solid fa-plus text-xs"></i>
+            <span>New Leave Request</span>
+        </a>
+    </div>
+
+    <!-- Status Filters Bar -->
+    <div class="flex flex-wrap items-center gap-2 p-1.5 bg-slate-200/60 rounded-xl w-fit">
+        <a href="/leave/history?status=all"
+           class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-white text-indigo-700 shadow-xs">
+            All Records
+        </a>
+        <a href="/leave/history?status=pending"
+           class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
+            Pending Review
+        </a>
+        <a href="/leave/history?status=approved"
+           class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
+            Approved
+        </a>
+        <a href="/leave/history?status=rejected"
+           class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
+            Rejected
+        </a>
+        <a href="/leave/history?status=cancelled"
+           class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
+            Cancelled
+        </a>
+    </div>
+
+    <!-- Applications Table -->
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+        
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-slate-50 border-b border-slate-200/80">
+                    <tr class="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                        <th class="px-6 py-4">Request Details</th>
+                        <th class="px-6 py-4">Duration & Dates</th>
+                        <th class="px-6 py-4">Reason / Notes</th>
+                        <th class="px-6 py-4">Status & Reviewer</th>
+                        <th class="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    
+                    <tr class="hover:bg-slate-50/70 transition">
+                        <!-- Request Details -->
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background-color: #10B981;"></span>
+                                <div>
+                                    <span class="font-bold text-slate-900 text-sm block">Casual Leave</span>
+                                    <span class="text-[11px] text-slate-400">Ref #LMS-3 • Applied 2026-10-06 05:45</span>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Duration & Dates -->
+                        <td class="px-6 py-4">
+                            <div class="font-semibold text-slate-800 text-sm">
+                                2026-10-15 &rarr; 2026-10-16
+                            </div>
+                            <div class="text-xs text-slate-500 mt-0.5">
+                                <span class="font-bold text-indigo-600">2.0</span> working day(s)
+                                
+                            </div>
+                        </td>
+
+                        <!-- Reason -->
+                        <td class="px-6 py-4 max-w-xs">
+                            <p class="text-xs text-slate-700 italic truncate" title="Attending brother wedding reception">"Attending brother wedding reception"</p>
+                            
+                        </td>
+
+                        <!-- Status & Reviewer -->
+                        <td class="px-6 py-4">
+                            
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5 pulse-badge"></span> In Review
+                                </span>
+                                <p class="text-[10px] text-slate-400 mt-1">Awaiting Manager</p>
+                            
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="px-6 py-4 text-right">
+                            
+                            <form method="POST" action="/leave/cancel/3" onsubmit="return confirm('Are you sure you want to cancel this leave application? Your quota will be restored immediately.');">
+                                <button type="submit" class="text-xs font-semibold text-rose-600 hover:text-rose-800 hover:bg-rose-50 px-2.5 py-1.5 rounded-lg border border-rose-200 transition">
+                                    <i class="fa-solid fa-ban mr-1"></i> Cancel
+                                </button>
+                            </form>
+                            
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-slate-50/70 transition">
+                        <!-- Request Details -->
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background-color: #EF4444;"></span>
+                                <div>
+                                    <span class="font-bold text-slate-900 text-sm block">Sick Leave</span>
+                                    <span class="text-[11px] text-slate-400">Ref #LMS-2 • Applied 2026-09-07 08:15</span>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Duration & Dates -->
+                        <td class="px-6 py-4">
+                            <div class="font-semibold text-slate-800 text-sm">
+                                2026-09-07 
+                            </div>
+                            <div class="text-xs text-slate-500 mt-0.5">
+                                <span class="font-bold text-indigo-600">1.0</span> working day(s)
+                                
+                            </div>
+                        </td>
+
+                        <!-- Reason -->
+                        <td class="px-6 py-4 max-w-xs">
+                            <p class="text-xs text-slate-700 italic truncate" title="Acute viral fever and doctor visit">"Acute viral fever and doctor visit"</p>
+                            
+                            <div class="mt-1.5 p-2 rounded-lg bg-slate-50 border border-slate-200/70 text-[11px]">
+                                <span class="font-semibold text-slate-700 block"><i class="fa-solid fa-comment-dots mr-1 text-indigo-500"></i>Manager Remark:</span>
+                                <span class="text-slate-600">Get well soon.</span>
+                            </div>
+                            
+                        </td>
+
+                        <!-- Status & Reviewer -->
+                        <td class="px-6 py-4">
+                            
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    <i class="fa-solid fa-check text-[10px] mr-1.5"></i> Approved
+                                </span>
+                                
+                                <p class="text-[10px] text-slate-400 mt-1">by Alexandra Vance</p>
+                                
+                            
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="px-6 py-4 text-right">
+                            
+                            <span class="text-xs text-slate-400">—</span>
+                            
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-slate-50/70 transition">
+                        <!-- Request Details -->
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background-color: #3B82F6;"></span>
+                                <div>
+                                    <span class="font-bold text-slate-900 text-sm block">Annual Leave</span>
+                                    <span class="text-[11px] text-slate-400">Ref #LMS-1 • Applied 2026-08-01 10:30</span>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Duration & Dates -->
+                        <td class="px-6 py-4">
+                            <div class="font-semibold text-slate-800 text-sm">
+                                2026-08-10 &rarr; 2026-08-12
+                            </div>
+                            <div class="text-xs text-slate-500 mt-0.5">
+                                <span class="font-bold text-indigo-600">3.0</span> working day(s)
+                                
+                            </div>
+                        </td>
+
+                        <!-- Reason -->
+                        <td class="px-6 py-4 max-w-xs">
+                            <p class="text-xs text-slate-700 italic truncate" title="Family vacation trip">"Family vacation trip"</p>
+                            
+                            <div class="mt-1.5 p-2 rounded-lg bg-slate-50 border border-slate-200/70 text-[11px]">
+                                <span class="font-semibold text-slate-700 block"><i class="fa-solid fa-comment-dots mr-1 text-indigo-500"></i>Manager Remark:</span>
+                                <span class="text-slate-600">Approved. Enjoy your break!</span>
+                            </div>
+                            
+                        </td>
+
+                        <!-- Status & Reviewer -->
+                        <td class="px-6 py-4">
+                            
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    <i class="fa-solid fa-check text-[10px] mr-1.5"></i> Approved
+                                </span>
+                                
+                                <p class="text-[10px] text-slate-400 mt-1">by Alexandra Vance</p>
+                                
+                            
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="px-6 py-4 text-right">
+                            
+                            <span class="text-xs text-slate-400">—</span>
+                            
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+
+</div>
+
+        </main>
+    </div>
+
+    <!-- Global App JS -->
+    <script src="file:///C:/Users/Abhishek/OneDrive/Desktop/employeeleavemanagementsystem/static/js/app.js"></script>
+    
+</body>
+</html>

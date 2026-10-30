@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LeaveFlow{% endblock %} - Enterprise Leave Management</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="h-full text-slate-800 antialiased flex flex-col md:flex-row">
+
+    {% if session.get('user_id') %}
+    <!-- Sidebar Navigation -->
+    <aside class="w-full md:w-64 bg-slate-900 text-slate-300 flex-shrink-0 flex flex-col justify-between border-r border-slate-800">
+        <div>
+            <!-- Brand Logo -->
+            <div class="h-16 flex items-center px-6 bg-slate-950/60 border-b border-slate-800/80 gap-3">
+                <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+                    <i class="fa-solid fa-calendar-check text-lg"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-white text-lg tracking-tight">LeaveFlow</span>
+                    <span class="text-[10px] block text-indigo-400 font-semibold tracking-wider uppercase">Enterprise ELMS</span>
+                </div>
+            </div>
+
+            <!-- Role Badge -->
+            <div class="px-6 py-4">
+                <div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white text-xs" style="background-color: {{ session.get('avatar_color', '#4F46E5') }};">
+                        {{ session.get('full_name', 'User')[:1] }}
+                    </div>
+                    <div class="overflow-hidden">
+                        <p class="text-xs font-semibold text-white truncate">{{ session.get('full_name') }}</p>
+                        <p class="text-[11px] text-slate-400 truncate flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full {% if session.get('role') == 'admin' %}bg-amber-400{% else %}bg-emerald-400{% endif %}"></span>
+                            {{ session.get('role')|capitalize }} • {{ session.get('emp_code') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="px-3 space-y-1 text-sm font-medium">
+                {% if session.get('role') == 'admin' %}
+                    <p class="px-3 pt-2 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">Administration</p>
+                    <a href="{{ url_for('admin_dashboard') }}" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition {% if request.endpoint == 'admin_dashboard' %}bg-indigo-600 text-white shadow-md shadow-indigo-600/30{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-chart-pie w-5 text-center"></i>
+                            <span>Overview</span>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('admin_approvals') }}" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition {% if request.endpoint == 'admin_approvals' %}bg-indigo-600 text-white shadow-md shadow-indigo-600/30{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-inbox w-5 text-center"></i>
+                            <span>Approvals Queue</span>
+                        </div>
+                        {% if global_pending_count > 0 %}
+                        <span class="px-2 py-0.5 text-xs font-bold rounded-full bg-amber-500 text-slate-950 pulse-badge">
+                            {{ global_pending_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+                    <a href="{{ url_for('admin_employees') }}" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition {% if request.endpoint == 'admin_employees' %}bg-indigo-600 text-white shadow-md shadow-indigo-600/30{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-users-gear w-5 text-center"></i>
+                            <span>Personnel & Quotas</span>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('admin_reports') }}" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition {% if request.endpoint == 'admin_reports' %}bg-indigo-600 text-white shadow-md shadow-indigo-600/30{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-file-invoice w-5 text-center"></i>
+                            <span>Reports & Export</span>
+                        </div>
+                    </a>
+                    <div class="my-3 border-t border-slate-800"></div>
+                {% endif %}
+
+                <p class="px-3 pt-2 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">My Workspace</p>
+                <a href="{{ url_for('dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {% if request.endpoint == 'dashboard' %}bg-indigo-600 text-white shadow-md shadow-indigo-600/30{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">
+                    <i class="fa-solid fa-house w-5 text-center"></i>
+                    <span>Leave Dashboard</span>
+                </a>
+                <a href="{{ url_for('apply_leave') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {% if request.endpoint == 'apply_leave' %}bg-indigo-600 text-white shadow-md shadow-indigo-600/30{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">
+                    <i class="fa-solid fa-paper-plane w-5 text-center"></i>
+                    <span>Request Leave</span>
+                </a>
+                <a href="{{ url_for('leave_history') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {% if request.endpoint == 'leave_history' %}bg-indigo-600 text-white shadow-md shadow-indigo-600/30{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">
+                    <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
+                    <span>My Applications</span>
+                </a>
+                <a href="{{ url_for('holidays') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {% if request.endpoint == 'holidays' %}bg-indigo-600 text-white shadow-md shadow-indigo-600/30{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">
+                    <i class="fa-solid fa-calendar-days w-5 text-center"></i>
+                    <span>Holiday Schedule</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Logout Bottom Footer -->
+        <div class="p-4 border-t border-slate-800/80 bg-slate-950/40">
+            <a href="{{ url_for('logout') }}" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-400 hover:text-red-400 hover:bg-red-950/20 rounded-xl transition font-medium">
+                <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i>
+                <span>Sign Out</span>
+            </a>
+        </div>
+    </aside>
+    {% endif %}
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        {% if session.get('user_id') %}
+        <!-- Top App Header -->
+        <header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-20 shadow-xs">
+            <div class="flex items-center gap-3">
+                <h1 class="text-lg font-bold text-slate-800">{% block header_title %}Overview{% endblock %}</h1>
+                <span class="text-xs text-slate-400 hidden sm:inline">|</span>
+                <span class="text-xs text-slate-500 font-medium hidden sm:inline">{{ session.get('department') }}</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold {% if session.get('role') == 'admin' %}bg-indigo-50 text-indigo-700 border border-indigo-200{% else %}bg-emerald-50 text-emerald-700 border border-emerald-200{% endif %}">
+                    <span class="w-1.5 h-1.5 rounded-full {% if session.get('role') == 'admin' %}bg-indigo-500{% else %}bg-emerald-500{% endif %}"></span>
+                    {{ session.get('role')|upper }} PORTAL
+                </span>
+                <div class="text-xs text-slate-400 font-medium hidden md:block">
+                    <i class="fa-regular fa-calendar mr-1"></i> {{ today_date }}
+                </div>
+            </div>
+        </header>
+        {% endif %}
+
+        <!-- Flash Alert Messages -->
+        <div class="px-6 pt-4">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% set bg_color = 'bg-blue-50 text-blue-800 border-blue-200' %}
+                        {% set icon = 'fa-info-circle text-blue-500' %}
+                        {% if category == 'success' %}
+                            {% set bg_color = 'bg-emerald-50 text-emerald-800 border-emerald-200' %}
+                            {% set icon = 'fa-circle-check text-emerald-500' %}
+                        {% elif category == 'danger' %}
+                            {% set bg_color = 'bg-rose-50 text-rose-800 border-rose-200' %}
+                            {% set icon = 'fa-circle-exclamation text-rose-500' %}
+                        {% elif category == 'warning' %}
+                            {% set bg_color = 'bg-amber-50 text-amber-800 border-amber-200' %}
+                            {% set icon = 'fa-triangle-exclamation text-amber-500' %}
+                        {% endif %}
+                        <div class="alert-banner mb-3 p-4 rounded-xl border {{ bg_color }} flex items-center justify-between text-sm shadow-xs transition">
+                            <div class="flex items-center gap-3 font-medium">
+                                <i class="fa-solid {{ icon }} text-base"></i>
+                                <span>{{ message }}</span>
+                            </div>
+                            <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-700">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- Page Specific Body Content -->
+        <main class="flex-1 p-6">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Global App JS -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Leave Reports & Export - LeaveFlow{% endblock %}
+{% block header_title %}Reports & Leave Analytics{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h2 class="text-xl font-extrabold text-slate-800">Leave Records & Compliance Audit</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Filter time-off history across all company departments and export audit-ready CSV reports.</p>
+        </div>
+        <a href="{{ url_for('admin_reports_export', status=status_filter, department=dept_filter, leave_type_id=type_filter) }}"
+           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-md shadow-emerald-600/30 transition">
+            <i class="fa-solid fa-file-csv text-sm"></i>
+            <span>Export to CSV Report</span>
+        </a>
+    </div>
+
+    <!-- Filters Bar Card -->
+    <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
+        <form method="GET" action="{{ url_for('admin_reports') }}" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Department</label>
+                <select name="department" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                    <option value="">All Departments</option>
+                    {% for d in departments %}
+                    <option value="{{ d }}" {% if dept_filter == d %}selected{% endif %}>{{ d }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Leave Category</label>
+                <select name="leave_type_id" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                    <option value="">All Categories</option>
+                    {% for lt in leave_types %}
+                    <option value="{{ lt.id }}" {% if type_filter == lt.id|string %}selected{% endif %}>{{ lt.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Status</label>
+                <select name="status" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                    <option value="">All Statuses</option>
+                    <option value="approved" {% if status_filter == 'approved' %}selected{% endif %}>Approved</option>
+                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Rejected</option>
+                    <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                </select>
+            </div>
+
+            <div class="flex items-end gap-2">
+                <button type="submit" class="flex-1 py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-xs transition">
+                    <i class="fa-solid fa-filter mr-1"></i> Apply Filters
+                </button>
+                <a href="{{ url_for('admin_reports') }}" class="py-2 px-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold transition text-center">
+                    Reset
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Summary Metrics for Filtered Dataset -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Applications Found</span>
+            <p class="text-xl font-black text-slate-800 mt-1">{{ total_records }}</p>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Approved Leave Days</span>
+            <p class="text-xl font-black text-emerald-600 mt-1">{{ total_approved_days }} <span class="text-xs font-normal text-slate-400">days</span></p>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Pending Leave Days</span>
+            <p class="text-xl font-black text-amber-600 mt-1">{{ total_pending_days }} <span class="text-xs font-normal text-slate-400">days</span></p>
+        </div>
+    </div>
+
+    <!-- Results Table -->
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+        {% if applications %}
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-slate-50 border-b border-slate-200/80">
+                    <tr class="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                        <th class="px-6 py-4">Employee</th>
+                        <th class="px-6 py-4">Leave Type</th>
+                        <th class="px-6 py-4">Date Span</th>
+                        <th class="px-6 py-4 text-center">Days</th>
+                        <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4">Reason / Remarks</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for app in applications %}
+                    <tr class="hover:bg-slate-50/70 transition">
+                        <td class="px-6 py-4">
+                            <span class="font-bold text-slate-900 block">{{ app.full_name }}</span>
+                            <span class="text-[11px] text-slate-400">{{ app.department }} • {{ app.emp_code }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-md text-white" style="background-color: {{ app.leave_color }};">
+                                {{ app.leave_code }}
+                            </span>
+                            <span class="text-xs text-slate-700 ml-1 font-medium">{{ app.leave_name }}</span>
+                        </td>
+                        <td class="px-6 py-4 text-xs text-slate-700">
+                            {{ app.start_date }} {% if app.start_date != app.end_date %}&rarr; {{ app.end_date }}{% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-center font-bold text-indigo-700 text-xs">
+                            {{ app.total_days }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if app.status == 'approved' %}
+                                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    Approved
+                                </span>
+                            {% elif app.status == 'pending' %}
+                                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                    Pending
+                                </span>
+                            {% elif app.status == 'rejected' %}
+                                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                    Rejected
+                                </span>
+                            {% else %}
+                                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600">
+                                    Cancelled
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 max-w-xs text-xs text-slate-600">
+                            <p class="italic truncate" title="{{ app.reason }}">"{{ app.reason }}"</p>
+                            {% if app.manager_remarks %}
+                            <p class="text-[10px] text-indigo-600 mt-0.5 truncate" title="{{ app.manager_remarks }}">
+                                <strong>Remark:</strong> {{ app.manager_remarks }}
+                            </p>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-12 text-slate-400">
+            <p class="text-sm font-semibold text-slate-700">No matching records found</p>
+            <p class="text-xs text-slate-400 mt-0.5">Try adjusting or clearing your filters above.</p>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

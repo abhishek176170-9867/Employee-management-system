@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Reports & Export - LeaveFlow - Enterprise Leave Management</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="file:///C:/Users/Abhishek/OneDrive/Desktop/employeeleavemanagementsystem/static/css/custom.css">
+    
+</head>
+<body class="h-full text-slate-800 antialiased flex flex-col md:flex-row">
+
+    
+    <!-- Sidebar Navigation -->
+    <aside class="w-full md:w-64 bg-slate-900 text-slate-300 flex-shrink-0 flex flex-col justify-between border-r border-slate-800">
+        <div>
+            <!-- Brand Logo -->
+            <div class="h-16 flex items-center px-6 bg-slate-950/60 border-b border-slate-800/80 gap-3">
+                <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+                    <i class="fa-solid fa-calendar-check text-lg"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-white text-lg tracking-tight">LeaveFlow</span>
+                    <span class="text-[10px] block text-indigo-400 font-semibold tracking-wider uppercase">Enterprise ELMS</span>
+                </div>
+            </div>
+
+            <!-- Role Badge -->
+            <div class="px-6 py-4">
+                <div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white text-xs" style="background-color: #6366F1;">
+                        A
+                    </div>
+                    <div class="overflow-hidden">
+                        <p class="text-xs font-semibold text-white truncate">Alexandra Vance</p>
+                        <p class="text-[11px] text-slate-400 truncate flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                            Admin • EMP-1000
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="px-3 space-y-1 text-sm font-medium">
+                
+                    <p class="px-3 pt-2 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">Administration</p>
+                    <a href="/admin/dashboard" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-chart-pie w-5 text-center"></i>
+                            <span>Overview</span>
+                        </div>
+                    </a>
+                    <a href="/admin/approvals" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-inbox w-5 text-center"></i>
+                            <span>Approvals Queue</span>
+                        </div>
+                        
+                        <span class="px-2 py-0.5 text-xs font-bold rounded-full bg-amber-500 text-slate-950 pulse-badge">
+                            3
+                        </span>
+                        
+                    </a>
+                    <a href="/admin/employees" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-users-gear w-5 text-center"></i>
+                            <span>Personnel & Quotas</span>
+                        </div>
+                    </a>
+                    <a href="/admin/reports" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition bg-indigo-600 text-white shadow-md shadow-indigo-600/30">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-file-invoice w-5 text-center"></i>
+                            <span>Reports & Export</span>
+                        </div>
+                    </a>
+                    <div class="my-3 border-t border-slate-800"></div>
+                
+
+                <p class="px-3 pt-2 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">My Workspace</p>
+                <a href="/dashboard" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-house w-5 text-center"></i>
+                    <span>Leave Dashboard</span>
+                </a>
+                <a href="/leave/apply" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-paper-plane w-5 text-center"></i>
+                    <span>Request Leave</span>
+                </a>
+                <a href="/leave/history" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
+                    <span>My Applications</span>
+                </a>
+                <a href="/holidays" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-calendar-days w-5 text-center"></i>
+                    <span>Holiday Schedule</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Logout Bottom Footer -->
+        <div class="p-4 border-t border-slate-800/80 bg-slate-950/40">
+            <a href="/logout" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-400 hover:text-red-400 hover:bg-red-950/20 rounded-xl transition font-medium">
+                <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i>
+                <span>Sign Out</span>
+            </a>
+        </div>
+    </aside>
+    
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        
+        <!-- Top App Header -->
+        <header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-20 shadow-xs">
+            <div class="flex items-center gap-3">
+                <h1 class="text-lg font-bold text-slate-800">Reports & Leave Analytics</h1>
+                <span class="text-xs text-slate-400 hidden sm:inline">|</span>
+                <span class="text-xs text-slate-500 font-medium hidden sm:inline">People Operations &amp; HR</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                    ADMIN PORTAL
+                </span>
+                <div class="text-xs text-slate-400 font-medium hidden md:block">
+                    <i class="fa-regular fa-calendar mr-1"></i> 2026-10-06
+                </div>
+            </div>
+        </header>
+        
+
+        <!-- Flash Alert Messages -->
+        <div class="px-6 pt-4">
+            
+                
+            
+        </div>
+
+        <!-- Page Specific Body Content -->
+        <main class="flex-1 p-6">
+            
+<div class="space-y-6">
+
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h2 class="text-xl font-extrabold text-slate-800">Leave Records & Compliance Audit</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Filter time-off history across all company departments and export audit-ready CSV reports.</p>
+        </div>
+        <a href="/admin/reports/export?status=&amp;department=&amp;leave_type_id="
+           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-md shadow-emerald-600/30 transition">
+            <i class="fa-solid fa-file-csv text-sm"></i>
+            <span>Export to CSV Report</span>
+        </a>
+    </div>
+
+    <!-- Filters Bar Card -->
+    <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
+        <form method="GET" action="/admin/reports" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Department</label>
+                <select name="department" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                    <option value="">All Departments</option>
+                    
+                    <option value="Engineering" >Engineering</option>
+                    
+                    <option value="Marketing &amp; Growth" >Marketing &amp; Growth</option>
+                    
+                    <option value="People Operations &amp; HR" >People Operations &amp; HR</option>
+                    
+                    <option value="Product &amp; Design" >Product &amp; Design</option>
+                    
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Leave Category</label>
+                <select name="leave_type_id" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                    <option value="">All Categories</option>
+                    
+                    <option value="1" >Annual Leave</option>
+                    
+                    <option value="2" >Sick Leave</option>
+                    
+                    <option value="3" >Casual Leave</option>
+                    
+                    <option value="4" >Parental Leave</option>
+                    
+                    <option value="5" >Bereavement Leave</option>
+                    
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Status</label>
+                <select name="status" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                    <option value="">All Statuses</option>
+                    <option value="approved" >Approved</option>
+                    <option value="pending" >Pending</option>
+                    <option value="rejected" >Rejected</option>
+                    <option value="cancelled" >Cancelled</option>
+                </select>
+            </div>
+
+            <div class="flex items-end gap-2">
+                <button type="submit" class="flex-1 py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-xs transition">
+                    <i class="fa-solid fa-filter mr-1"></i> Apply Filters
+                </button>
+                <a href="/admin/reports" class="py-2 px-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold transition text-center">
+                    Reset
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Summary Metrics for Filtered Dataset -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Applications Found</span>
+            <p class="text-xl font-black text-slate-800 mt-1">6</p>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Approved Leave Days</span>
+            <p class="text-xl font-black text-emerald-600 mt-1">4.0 <span class="text-xs font-normal text-slate-400">days</span></p>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Pending Leave Days</span>
+            <p class="text-xl font-black text-amber-600 mt-1">5.5 <span class="text-xs font-normal text-slate-400">days</span></p>
+        </div>
+    </div>
+
+    <!-- Results Table -->
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+        
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-slate-50 border-b border-slate-200/80">
+                    <tr class="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                        <th class="px-6 py-4">Employee</th>
+                        <th class="px-6 py-4">Leave Type</th>
+                        <th class="px-6 py-4">Date Span</th>
+                        <th class="px-6 py-4 text-center">Days</th>
+                        <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4">Reason / Remarks</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    
+                    <tr class="hover:bg-slate-50/70 transition">
+                        <td class="px-6 py-4">
+                            <span class="font-bold text-slate-900 block">John Doe</span>
+                            <span class="text-[11px] text-slate-400">Engineering • EMP-1001</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-md text-white" style="background-color: #10B981;">
+                                CL
+                            </span>
+                            <span class="text-xs text-slate-700 ml-1 font-medium">Casual Leave</span>
+                        </td>
+                        <td class="px-6 py-4 text-xs text-slate-700">
+                            2026-10-15 &rarr; 2026-10-16
+                        </td>
+                        <td class="px-6 py-4 text-center font-bold text-indigo-700 text-xs">
+                            2.0
+                        </td>
+                        <td class="px-6 py-4">
+                            
+                                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                    Pending
+                                </span>
+                            
+                        </td>
+                        <td class="px-6 py-4 max-w-xs text-xs text-slate-600">
+                            <p class="italic truncate" title="Attending brother wedding reception">"Attending brother wedding reception"</p>
+                            
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-slate-50/70 transition">
+                        <td class="px-6 py-4">
+                            <span class="font-bold text-slate-900 block">Sarah Jenkins</span>
+                            <span class="text-[11px] text-slate-400">Product &amp; Design • EMP-1002</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-md text-white" style="background-color: #EF4444;">
+                                SL
+                            </span>
+                            <span class="text-xs text-slate-700 ml-1 font-medium">Sick Leave</span>
+                        </td>
+                        <td class="px-6 py-4 text-xs text-slate-700">
+                            2026-10-14 
+                        </td>
+                        <td class="px-6 py-4 text-center font-bold text-indigo-700 text-xs">
+                            0.5
+                        </td>
+                        <td class="px-6 py-4">
+                            
+                                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                    Pending
+                                </span>
+                            
+                        </td>
+                        <td class="px-6 py-4 max-w-xs text-xs text-slate-600">
+                            <p class="italic truncate" title="Dental clinic appointment in afternoon">"Dental clinic appointment in afternoon"</p>
+                            
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-slate-50/70 transition">
+                        <td class="px-6 py-4">
+                            <span class="font-bold text-slate-900 block">Michael Chang</span>
+                            <span class="text-[11px] text-slate-400">Marketing &amp; Growth • EMP-1003</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-md text-white" style="background-color: #3B82F6;">
+                                AL
+                            </span>
+                            <span class="text-xs text-slate-700 ml-1 font-medium">Annual Leave</span>
+                        </td>
+                        <td class="px-6 py-4 text-xs text-slate-700">
+                            2026-11-02 &rarr; 2026-11-04
+                        </td>
+                        <td class="px-6 py-4 text-center font-bold text-indigo-700 text-xs">
+                            3.0
+                        </td>
+                        <td class="px-6 py-4">
+                            
+                                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                    Pending
+                                </span>
+                            
+                        </td>
+                        <td class="px-6 py-4 max-w-xs text-xs text-slate-600">
+                            <p class="italic truncate" title="Post-campaign rest and travel">"Post-campaign rest and travel"</p>
+                            
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-slate-50/70 transition">
+                        <td class="px-6 py-4">
+                            <span class="font-bold text-slate-900 block">Michael Chang</span>
+                            <span class="text-[11px] text-slate-400">Marketing &amp; Growth • EMP-1003</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-md text-white" style="background-color: #10B981;">
+                                CL
+                            </span>
+                            <span class="text-xs text-slate-700 ml-1 font-medium">Casual Leave</span>
+                        </td>
+                        <td class="px-6 py-4 text-xs text-slate-700">
+                            2026-09-20 &rarr; 2026-09-22
+                        </td>
+                        <td class="px-6 py-4 text-center font-bold text-indigo-700 text-xs">
+                            2.0
+                        </td>
+                        <td class="px-6 py-4">
+                            
+                                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                    Rejected
+                                </span>
+                            
+                        </td>
+                        <td class="px-6 py-4 max-w-xs text-xs text-slate-600">
+                            <p class="italic truncate" title="Personal road trip">"Personal road trip"</p>
+                            
+                            <p class="text-[10px] text-indigo-600 mt-0.5 truncate" title="Sprint release milestone scheduled during these dates. Please reschedule.">
+                                <strong>Remark:</strong> Sprint release milestone scheduled during these dates. Please reschedule.
+                            </p>
+                            
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-slate-50/70 transition">
+                        <td class="px-6 py-4">
+                            <span class="font-bold text-slate-900 block">John Doe</span>
+                            <span class="text-[11px] text-slate-400">Engineering • EMP-1001</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-md text-white" style="background-color: #EF4444;">
+                                SL
+                            </span>
+                            <span class="text-xs text-slate-700 ml-1 font-medium">Sick Leave</span>
+                        </td>
+                        <td class="px-6 py-4 text-xs text-slate-700">
+                            2026-09-07 
+                        </td>
+                        <td class="px-6 py-4 text-center font-bold text-indigo-700 text-xs">
+                            1.0
+                        </td>
+                        <td class="px-6 py-4">
+                            
+                                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    Approved
+                                </span>
+                            
+                        </td>
+                        <td class="px-6 py-4 max-w-xs text-xs text-slate-600">
+                            <p class="italic truncate" title="Acute viral fever and doctor visit">"Acute viral fever and doctor visit"</p>
+                            
+                            <p class="text-[10px] text-indigo-600 mt-0.5 truncate" title="Get well soon.">
+                                <strong>Remark:</strong> Get well soon.
+                            </p>
+                            
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-slate-50/70 transition">
+                        <td class="px-6 py-4">
+                            <span class="font-bold text-slate-900 block">John Doe</span>
+                            <span class="text-[11px] text-slate-400">Engineering • EMP-1001</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-md text-white" style="background-color: #3B82F6;">
+                                AL
+                            </span>
+                            <span class="text-xs text-slate-700 ml-1 font-medium">Annual Leave</span>
+                        </td>
+                        <td class="px-6 py-4 text-xs text-slate-700">
+                            2026-08-10 &rarr; 2026-08-12
+                        </td>
+                        <td class="px-6 py-4 text-center font-bold text-indigo-700 text-xs">
+                            3.0
+                        </td>
+                        <td class="px-6 py-4">
+                            
+                                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    Approved
+                                </span>
+                            
+                        </td>
+                        <td class="px-6 py-4 max-w-xs text-xs text-slate-600">
+                            <p class="italic truncate" title="Family vacation trip">"Family vacation trip"</p>
+                            
+                            <p class="text-[10px] text-indigo-600 mt-0.5 truncate" title="Approved. Enjoy your break!">
+                                <strong>Remark:</strong> Approved. Enjoy your break!
+                            </p>
+                            
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+
+</div>
+
+        </main>
+    </div>
+
+    <!-- Global App JS -->
+    <script src="file:///C:/Users/Abhishek/OneDrive/Desktop/employeeleavemanagementsystem/static/js/app.js"></script>
+    
+</body>
+</html>
